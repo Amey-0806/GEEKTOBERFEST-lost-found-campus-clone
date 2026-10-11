@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
 import ItemCard from "../components/ItemCard";
+import EmptyState from "../components/EmptyState";
 import { formatApiErrorMessage } from "../utils/validation";
 
 function Items() {
@@ -75,6 +76,24 @@ function Items() {
     fetchItems(emptyFilters);
   };
 
+  const clearFilter = (key) => {
+    const updatedFilters = {
+      ...filters,
+      [key]: "",
+    };
+
+    setFilters(updatedFilters);
+    fetchItems(updatedFilters);
+  };
+
+  const hasActiveFilters = Boolean(
+    filters.search ||
+    filters.category ||
+    filters.location ||
+    filters.type ||
+    filters.status
+  );
+
   return (
     <div className="mx-auto max-w-7xl px-6 py-10">
       <h1 className="mb-8 text-3xl font-bold">
@@ -89,7 +108,7 @@ function Items() {
           <span>{errorMessage}</span>
           <button
             onClick={() => fetchItems()}
-            className="ml-4 underline font-semibold hover:text-red-900"
+            className="ml-4 underline font-semibold hover:text-red-900 cursor-pointer"
           >
             Retry
           </button>
@@ -177,22 +196,38 @@ function Items() {
         </select>
       </div>
 
-      <button
-        onClick={clearFilters}
-        className="mb-8 rounded-lg border px-4 py-2 hover:bg-gray-100 transition-colors"
-      >
-        Clear Filters
-      </button>
+      <div className="mb-8 flex items-center justify-between">
+        <button
+          onClick={clearFilters}
+          disabled={!hasActiveFilters}
+          className={`rounded-lg border px-4 py-2 transition-colors ${
+            hasActiveFilters
+              ? "border-gray-300 text-gray-700 hover:bg-gray-100 cursor-pointer"
+              : "border-gray-200 text-gray-400 opacity-50 cursor-not-allowed"
+          }`}
+        >
+          Reset Filters
+        </button>
+
+        {hasActiveFilters && (
+          <span className="text-sm text-gray-500">
+            Active filters applied
+          </span>
+        )}
+      </div>
 
       {/* Results */}
       {loading ? (
-        <p className="text-gray-500">Loading items...</p>
-      ) : items.length === 0 ? (
-        <div className="rounded-lg bg-gray-100 p-10 text-center">
-          <p className="text-gray-500">
-            No items found matching the selected criteria.
-          </p>
+        <div className="py-12 text-center" role="status">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent align-[-0.125em]"></div>
+          <p className="mt-4 text-gray-500">Loading items...</p>
         </div>
+      ) : items.length === 0 ? (
+        <EmptyState
+          filters={filters}
+          onResetFilters={clearFilters}
+          onClearFilter={clearFilter}
+        />
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => (

@@ -13,8 +13,11 @@ function Home() {
 
   const fetchItems = async () => {
     try {
-      const response = await api.get("/items");
-      setItems(response.data.slice(0, 6));
+      const response = await api.get("/items", { params: { limit: 6 } });
+      const itemsList = Array.isArray(response.data)
+        ? response.data
+        : response.data?.items || [];
+      setItems(itemsList.slice(0, 6));
     } catch (error) {
       console.error(error);
     } finally {

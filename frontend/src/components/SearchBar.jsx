@@ -1,0 +1,41 @@
+import React from "react";
+
+function SearchBar({ value, onChange, placeholder = "Search items..." }) {
+  return (
+    <div className="relative w-full">
+      <input
+        type="text"
+        name="search"
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className="w-full rounded-lg border border-gray-300 px-4 py-3 pl-10 text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+      />
+      <svg
+        className="pointer-events-none absolute left-3 top-3.5 h-5 w-5 text-gray-400"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+        />
+      </svg>
+      {value && (
+        <button
+          type="button"
+          onClick={() => onChange({ target: { name: "search", value: "" } })}
+          className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+          title="Clear search"
+        >
+          ✕
+        </button>
+      )}
+    </div>
+  );
+}
+
+export default SearchBar;

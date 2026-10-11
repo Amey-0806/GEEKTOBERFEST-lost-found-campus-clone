@@ -45,7 +45,10 @@ const itemSchema = new mongoose.Schema(
             ref: "user",
             required: true
         }
-    }
+    },
+    { timestamps: true }
 )
+
+itemSchema.index({ category: 1, location: 1, type: 1, status: 1, date: -1 });
 
 module.exports = mongoose.model('Item',itemSchema)

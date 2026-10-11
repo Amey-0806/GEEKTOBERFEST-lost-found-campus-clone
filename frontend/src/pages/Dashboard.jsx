@@ -15,9 +15,12 @@ function Dashboard() {
 
   const fetchMyItems = async () => {
     try {
-      const response = await api.get("/items");
+      const response = await api.get("/items", { params: { limit: 100 } });
+      const itemsList = Array.isArray(response.data)
+        ? response.data
+        : response.data?.items || [];
 
-      const myItems = response.data.filter(
+      const myItems = itemsList.filter(
         (item) =>
           item.reportedBy?._id === user?.id
       );
